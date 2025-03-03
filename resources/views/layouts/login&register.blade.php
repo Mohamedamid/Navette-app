@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="Logo.png">
+    <link rel="icon" href="images/Logo.png">
     <title>Navette Express</title>
 
     <!-- Bootstrap CSS CDN -->

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Annonce;
 
 class AuthController extends Controller
 {
@@ -56,7 +57,9 @@ class AuthController extends Controller
 
     public function index()
     {
-        return view('welcome');
+        $user = Auth::user();
+        $voyages = Annonce::where('company_id', $user->id)->get();
+        return view('welcome', compact('voyages'));
     }
 
     public function logout(Request $request)
@@ -67,4 +70,3 @@ class AuthController extends Controller
         return redirect('/login')->with('success', 'Successfully logged out');
     }
 }
-
