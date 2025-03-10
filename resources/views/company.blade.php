@@ -1,66 +1,57 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Navette Express</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="images/Logo.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
+    <title>Navette</title>
     <style>
-        body {
-            background-image: url('/images/imageBus2.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
         .navbar {
-            background-color: #004085;
+            background-color: #343a40;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 999;
         }
 
-        .navbar-brand, .navbar-nav .nav-link {
-            color: #fff;
+        /* Adjust content spacing so it's not hidden under the navbar */
+        body {
+            background-color: #f8f9fa;
+            padding-top: 80px;
+            /* Adjust the space according to the navbar height */
         }
 
-        .navbar-nav .nav-link:hover {
-            color: #ffd700;
+        /* Styling the Navbar Brand */
+        .navbar-brand {
+            color: #fff !important;
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
-        .btn-primary {
-            background-color: #004085;
-            border-color: #004085;
+        /* Styling the Nav Links */
+        .navbar-nav .nav-item .nav-link {
+            color: #fff !important;
+            font-size: 1.1rem;
+            padding-right: 15px;
         }
 
-        .btn-primary:hover {
-            background-color: #003366;
-            border-color: #003366;
+        /* Hover effect for the Nav Links */
+        .navbar-nav .nav-item .nav-link:hover {
+            color: #007bff !important;
         }
 
-        .table {
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        th {
-            background-color: #004085;
-            color: white;
-        }
-
-        td {
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-
-        .table tbody tr:hover {
-            background-color: #f1f1f1;
+        .navbar-collapse {
+            justify-content: flex-end;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Navette Express</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -70,10 +61,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a href="/" class="nav-link text-white">Home</a>
+                        <a href="{{ route('index') }}" class="nav-link">Tag</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/form" class="nav-link text-white">Ajouter voyage</a>
+                        <a href="{{ route('indexPermission') }}" class="nav-link">Permission</a>
                     </li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST">
@@ -87,117 +78,124 @@
         </div>
     </nav>
 
-    <!-- Content Section -->
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Liste des Offres de Navettes</h2>
+    <div class="container mt-4">
+        <h1 class="text-center my-4">Liste des Navettes</h1>
+        <a href="{{ route('form') }}" class="btn btn-primary mb-4">Ajouter une Navette</a>
 
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
+        <table class="table table-striped table-hover table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Ville de Départ</th>
+                    <th>Ville d'Arrivée</th>
+                    <th>Heure de Départ</th>
+                    <th>Heure d'Arrivée</th>
+                    <th>Description du Bus</th>
+                    <th>status</th>
+                    <th>update status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($voyages as $voyage)
                     <tr>
-                        <th>ID</th>
-                        <th>Départ</th>
-                        <th>Arrivée</th>
-                        <th>Départ Time</th>
-                        <th>Arrivée Time</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <td>{{ $voyage->departure_city }}</td>
+                        <td>{{ $voyage->arrival_city }}</td>
+                        <td>{{ $voyage->departure_time }}</td>
+                        <td>{{ $voyage->arrival_time }}</td>
+                        <td>{{ $voyage->bus_description }}</td>
+                        <td class="status-text">{{ ucfirst($voyage->status) }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-toggle-status" data-id="{{ $voyage->id }}"
+                                data-status="{{ $voyage->status }}"
+                                style="background-color: {{ $voyage->status == 'valid' ? '#dc3545' : '#28a745' }}; color: white;">
+                                {{ $voyage->status == 'valid' ? 'Closed' : 'Valid' }}
+                            </button>
+                        </td>
+                        <td>
+                            <a href="{{ route('edit', $voyage->id) }}" class="btn btn-warning btn-sm">Modifier</a>
+                            <form action="{{ route('destroy', $voyage->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach($voyages as $voyage)
-                        <tr id="row-{{ $voyage->id }}">
-                            <td>{{ $voyage->id }}</td>
-                            <td>{{ $voyage->departure_city }}</td>
-                            <td>{{ $voyage->arrival_city }}</td>
-                            <td>{{ $voyage->departure_time }}</td>
-                            <td>{{ $voyage->arrival_time }}</td>
-                            <td class="status-text">{{ ucfirst($voyage->status) }}</td>
-                            <td>
-                                <button class="btn btn-sm btn-toggle-status" data-id="{{ $voyage->id }}"
-                                    data-status="{{ $voyage->status }}"
-                                    style="background-color: {{ $voyage->status == 'valid' ? '#28a745' : '#dc3545' }}; color: white;">
-                                    {{ $voyage->status == 'valid' ? 'Closed' : 'Valid' }}
-                                </button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center">Aucun voyage disponible</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-
-    <!-- Bootstrap & jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- إضافة مكتبة SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            $(".btn-toggle-status").click(function () {
+                let btn = $(this);
+                let voyageId = btn.data("id");
+                let currentStatus = btn.data("status");
+                let newStatus = currentStatus === "valid" ? "closed" : "valid";
 
-<script>
-    $(document).ready(function () {
-        $(".btn-toggle-status").click(function () {
-            let btn = $(this);
-            let voyageId = btn.data("id");
-            let currentStatus = btn.data("status");
-            let newStatus = currentStatus === "valid" ? "closed" : "valid";
+                Swal.fire({
+                    title: "Êtes-vous sûr?",
+                    text: "Vous êtes sur le point de changer le statut de ce voyage.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Oui, changer!",
+                    cancelButtonText: "Annuler"
+                }).then((result) => {
+                    if (result.isConfirmed) {
 
-            Swal.fire({
-                title: "Êtes-vous sûr?",
-                text: "Vous êtes sur le point de changer le statut de ce voyage.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Oui, changer!",
-                cancelButtonText: "Annuler"
-            }).then((result) => {
-                if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/voyages/update-status/" + voyageId,
+                            type: "POST",
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                status: newStatus
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    btn.data("status", newStatus);
+                                    btn.text(newStatus === "valid" ? "Closed" : "Valid");
+                                    btn.closest("tr").find(".status-text").text(newStatus.charAt(0).toUpperCase() + newStatus.slice(1));
 
-                    $.ajax({
-                        url: "/voyages/update-status/" + voyageId,
-                        type: "POST",
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            status: newStatus
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                btn.data("status", newStatus);
-                                btn.text(newStatus === "valid" ? "Closed" : "Valid");
-                                btn.closest("tr").find(".status-text").text(newStatus.charAt(0).toUpperCase() + newStatus.slice(1));
+                                    let newColor = newStatus === "valid" ? "#dc3545" : "#28a745";
+                                    btn.css({
+                                        "background-color": newColor,
+                                        "border-color": newColor,
+                                        "color": "white"
+                                    });
 
-                                let newColor = newStatus === "valid" ? "#28a745" : "#dc3545";
-                                btn.css({
-                                    "background-color": newColor,
-                                    "border-color": newColor,
-                                    "color": "white"
-                                });
-
+                                    Swal.fire({
+                                        title: "Succès!",
+                                        text: "Le statut a été mis à jour avec succès.",
+                                        icon: "success",
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                }
+                            },
+                            error: function () {
                                 Swal.fire({
-                                    title: "Succès!",
-                                    text: "Le statut a été mis à jour avec succès.",
-                                    icon: "success",
-                                    timer: 2000,
-                                    showConfirmButton: false
+                                    title: "Erreur!",
+                                    text: "Une erreur s'est produite lors de la mise à jour du statut.",
+                                    icon: "error"
                                 });
                             }
-                        },
-                        error: function () {
-                            Swal.fire({
-                                title: "Erreur!",
-                                text: "Une erreur s'est produite lors de la mise à jour du statut.",
-                                icon: "error"
-                            });
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             });
         });
-    });
-</script>
-
-
+    </script>
 </body>
+
 </html>

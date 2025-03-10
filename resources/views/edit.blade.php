@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="images/Logo.png">
-    <title>Navette Express</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
+    <title>Document</title>
     <style>
-        /* Fixed Navbar */
         .navbar {
             background-color: #343a40;
             position: fixed;
@@ -42,55 +40,11 @@
         .navbar-nav .nav-item .nav-link:hover {
             color: #007bff !important;
         }
-
-        /* Styling the Form */
-        .container {
-            max-width: 800px;
-            margin-top: 30px;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            color: #343a40;
-        }
-
-        .form-control {
-            border-radius: 0.375rem;
-            padding: 0.75rem;
-            font-size: 1rem;
-            border: 1px solid #ced4da;
-        }
-
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
-        }
-
-        textarea.form-control {
-            min-height: 150px;
-        }
-
-        .btn {
-            font-size: 1.1rem;
-            border-radius: 0.375rem;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        /* Add some margin-bottom to the form fields */
-        .mb-3 {
-            margin-bottom: 1.5rem;
+        .navbar-collapse {
+            justify-content: flex-end;
         }
     </style>
 </head>
-
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
@@ -101,9 +55,12 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a href="/" class="nav-link">Liste Navette</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/form" class="nav-link">Ajouter Navette</a>
                 </li>
                 <li class="nav-item">
                     <form action="{{ route('logout') }}" method="POST">
@@ -117,35 +74,33 @@
     </div>
 </nav>
 
-<div class="container mt-4 mb-4">
-    <h1 class="text-center my-4">Ajouter une Navette</h1>
-    <form action="{{ route('store') }}" method="POST">
+<div class="container mt-4">
+    <h1 class="text-center my-4">Modifier la Navette</h1>
+    <form action="{{ route('update', $voyage->id) }}" method="POST">
         @csrf
+        @method('PUT')
         <div class="mb-3">
             <label class="form-label">Ville de Départ</label>
-            <input type="text" name="departure_city" class="form-control" required>
+            <input type="text" name="departure_city" class="form-control" value="{{ $voyage->departure_city }}" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Ville d'Arrivée</label>
-            <input type="text" name="arrival_city" class="form-control" required>
+            <input type="text" name="arrival_city" class="form-control" value="{{ $voyage->arrival_city }}" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Heure de Départ</label>
-            <input type="datetime-local" name="departure_time" class="form-control" required>
+            <input type="datetime-local" name="departure_time" class="form-control" value="{{ $voyage->departure_time }}" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Heure d'Arrivée</label>
-            <input type="datetime-local" name="arrival_time" class="form-control" required>
+            <input type="datetime-local" name="arrival_time" class="form-control" value="{{ $voyage->arrival_time }}" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Description du Bus</label>
-            <textarea name="bus_description" class="form-control"></textarea>
+            <textarea name="bus_description" class="form-control">{{ $voyage->bus_description }}</textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Ajouter</button>
-    </form> 
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    </form>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
